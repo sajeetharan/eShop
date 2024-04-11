@@ -1,16 +1,29 @@
 ﻿@page "/"
 @inject NavigationManager Nav
 @inject CatalogService CatalogService
-@attribute [StreamRendering]
+@rendermode InteractiveServer
 
 <PageTitle>Northern Mountains</PageTitle>
 <SectionContent SectionName="page-header-title">Ready for a new adventure?</SectionContent>
-<SectionContent SectionName="page-header-subtitle">Start the season with the latest in clothing and equipment.</SectionContent>
+<SectionContent SectionName="page-header-subtitle">
+    @result
+</SectionContent>
 
+<div class="row catalog">
+    <div class="col-sm-6">
+        <input name="@nameof(Query)" size="100" placeholder="Search Term" aria-label="Type here..." @bind-value="@Query" />
+        <button @onclick="@Close" class="btn btn-primary"> Go <i class="bi bi-search" aria-label="Search"></i></button>
+        </div>
+    </div>
+<p>
+</p>
+<p></p>
 <div class="catalog">
-    <CatalogSearch BrandId="@BrandId" ItemTypeId="@ItemTypeId" />
-
-    @if (catalogResult is null)
+   
+   @*  <CatalogSearch BrandId="@BrandId" ItemTypeId="@ItemTypeId" /> *@
+ 
+ 
+    @if (items is null)
     {
         <p>Loading...</p>
     }
@@ -18,24 +31,27 @@
     {
         <div>
             <div class="catalog-items">
-                @foreach (var item in catalogResult.Data)
+                @foreach (var item in items)
                 {
                     <CatalogListItem Item="@item" />
                 }
             </div>
 
-            <div class="page-links">
+            @* <div class="page-links">
                 @foreach (var pageIndex in GetVisiblePageIndexes(catalogResult))
                 {
                     <NavLink ActiveClass="active-page" Match="@NavLinkMatch.All" href="@Nav.GetUriWithQueryParameter("page", pageIndex == 1 ? null : pageIndex)">@pageIndex</NavLink>
                 }
-            </div>
+            </div> *@
         </div>
     }
 </div>
 
 @code {
     const int PageSize = 9;
+
+    [SupplyParameterFromQuery]
+    public string? Query { get; set; }
 
     [SupplyParameterFromQuery]
     public int? Page { get; set; }
@@ -46,17 +62,48 @@
     [SupplyParameterFromQuery(Name = "type")]
     public int? ItemTypeId { get; set; }
 
-    CatalogResult? catalogResult;
+    public string? result { get; set; } = "";
+
+    List<CatalogItem> items = new List<CatalogItem>();
 
     static IEnumerable<int> GetVisiblePageIndexes(CatalogResult result)
         => Enumerable.Range(1, (int)Math.Ceiling(1.0 * result.Count / PageSize));
 
-    protected override async Task OnInitializedAsync()
+    async Task Close()
     {
-        catalogResult = await CatalogService.GetCatalogItems(
-            Page.GetValueOrDefault(1) - 1,
-            PageSize,
-            BrandId,
-            ItemTypeId);
+        if (Query == "snowboards")
+        {
+            List<int> ids = new List<int>();
+            ids.Add(92);
+            ids.Add(73);
+            ids.Add(43);
+            ids.Add(32);
+            ids.Add(12);
+            ids.Add(62);
+            ids.Add(22);
+            ids.Add(72);
+            ids.Add(82);
+            ids.Add(41);
+
+            items = await this.CatalogService.GetCatalogItems(ids);
+        }
+        if (Query == "I want snowboard like an Olympic champion")
+        {
+            List<int> ids = new List<int>();
+
+            ids.Add(73);
+            ids.Add(43);
+            ids.Add(32);
+            ids.Add(12);
+            ids.Add(62);
+            ids.Add(22);
+            ids.Add(72);
+            ids.Add(82);
+            ids.Add(41);
+            ids.Add(92);
+            items = await this.CatalogService.GetCatalogItems(ids);
+            items = items.OrderByDescending(t => t.Id).ToList();
+        }
+        result = $"Search Results for \"{Query}\"";
     }
 }
