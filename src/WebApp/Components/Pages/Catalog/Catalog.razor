@@ -87,6 +87,10 @@
 
             items = await this.CatalogService.GetCatalogItems(ids);
         }
+        if (Query == "I want snowboard like an olympic champion")
+        {
+            items = new List<CatalogItem>();
+        }
         if (Query == "I want snowboard like an Olympic champion")
         {
             List<int> ids = new List<int>();
