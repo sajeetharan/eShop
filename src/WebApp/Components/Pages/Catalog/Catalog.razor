@@ -11,8 +11,7 @@
 
 <div class="row catalog">
     <div class="col-sm-6">
-        <input name="@nameof(Query)" size="100" placeholder="Search Term" aria-label="Type here..." @bind-value="@Query" />
-        <button @onclick="@Close" class="btn btn-primary"> Go <i class="bi bi-search" aria-label="Search"></i></button>
+        <input name="@nameof(Query)" @onkeydown="@Enter" size="100" placeholder="Search Term" aria-label="Type here..." @bind-value="@Query" />
         </div>
     </div>
 <p>
@@ -69,45 +68,48 @@
     static IEnumerable<int> GetVisiblePageIndexes(CatalogResult result)
         => Enumerable.Range(1, (int)Math.Ceiling(1.0 * result.Count / PageSize));
 
-    async Task Close()
+    public async void Enter(KeyboardEventArgs e)
     {
-        if (Query == "snowboards")
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
-            List<int> ids = new List<int>();
-            ids.Add(92);
-            ids.Add(73);
-            ids.Add(43);
-            ids.Add(32);
-            ids.Add(12);
-            ids.Add(62);
-            ids.Add(22);
-            ids.Add(72);
-            ids.Add(82);
-            ids.Add(41);
+            if (Query == "snowboards")
+            {
+                List<int> ids = new List<int>();
+                ids.Add(92);
+                ids.Add(73);
+                ids.Add(43);
+                ids.Add(32);
+                ids.Add(12);
+                ids.Add(62);
+                ids.Add(22);
+                ids.Add(72);
+                ids.Add(82);
+                ids.Add(41);
 
-            items = await this.CatalogService.GetCatalogItems(ids);
-        }
-        if (Query == "I want snowboard like an olympic champion")
-        {
-            items = new List<CatalogItem>();
-        }
-        if (Query == "I want snowboard like an Olympic champion")
-        {
-            List<int> ids = new List<int>();
+                items = await this.CatalogService.GetCatalogItems(ids);
+            }
+            if (Query == "I want snowboard like an olympic champion")
+            {
+                items = new List<CatalogItem>();
+            }
+            if (Query == "I want snowboard like an Olympic champion")
+            {
+                List<int> ids = new List<int>();
 
-            ids.Add(73);
-            ids.Add(43);
-            ids.Add(32);
-            ids.Add(12);
-            ids.Add(62);
-            ids.Add(22);
-            ids.Add(72);
-            ids.Add(82);
-            ids.Add(41);
-            ids.Add(92);
-            items = await this.CatalogService.GetCatalogItems(ids);
-            items = items.OrderByDescending(t => t.Id).ToList();
+                ids.Add(73);
+                ids.Add(43);
+                ids.Add(32);
+                ids.Add(12);
+                ids.Add(62);
+                ids.Add(22);
+                ids.Add(72);
+                ids.Add(82);
+                ids.Add(41);
+                ids.Add(92);
+                items = await this.CatalogService.GetCatalogItems(ids);
+                items = items.OrderByDescending(t => t.Id).ToList();
+            }
+            result = $"Search Results for \"{Query}\"";
         }
-        result = $"Search Results for \"{Query}\"";
     }
 }
