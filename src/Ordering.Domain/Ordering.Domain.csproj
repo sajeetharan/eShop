@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
     <PackageReference Include="System.Reflection.TypeExtensions" />
   </ItemGroup>
 

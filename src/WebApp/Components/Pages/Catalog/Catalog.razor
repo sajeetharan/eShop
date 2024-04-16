@@ -73,7 +73,7 @@
     {
         if (Query == "snowboards")
         {
-            List<int> ids = new List<int>();
+            List<int> ids = new List<int>(); 
             ids.Add(92);
             ids.Add(73);
             ids.Add(43);
@@ -86,6 +86,8 @@
             ids.Add(41);
 
             items = await this.CatalogService.GetCatalogItems(ids);
+            items = items.OrderBy(r => ids.IndexOf(r.Id)).ToList();
+
         }
         if (Query == "I want snowboard like an olympic champion")
         {
@@ -106,7 +108,7 @@
             ids.Add(41);
             ids.Add(92);
             items = await this.CatalogService.GetCatalogItems(ids);
-            items = items.OrderByDescending(t => t.Id).ToList();
+            items = items.OrderBy(r => ids.IndexOf(r.Id)).ToList();
         }
         result = $"Search Results for \"{Query}\"";
     }
